@@ -1,0 +1,99 @@
+@ installing aws cli (macos)
+brew install awscli
+
+# verify version
+
+aws --version
+# aws-cli/2.34.48 Python/3.14.5 Darwin/25.4.0 source/arm64
+
+# Paso 3: Configurar Credenciales Ficticias
+
+aws configure
+
+AWS Access Key ID: test
+AWS Secret Access Key: test
+Default region name: us-east-1
+Default output format: json
+
+# Paso 4: Crear tu Bucket en Floci
+
+aws --endpoint-url=http://localhost:4566 s3 mb s3://mi-bucket-frontend
+
+
+
+# 1. Simulación de AWS en Local (Cero Riesgo)
+
+# La forma más segura de practicar la nube es no usar la nube real. Puedes levantar un entorno completo de AWS en tu propia computadora.
+
+# using https://floci.io/
+
+# add docker-compose.yml
+
+
+# 2. Levanta el contenedor
+
+docker compose up -d
+
+#Verifica que ya esté activo y escuchando en el puerto:
+
+docker ps
+
+
+# 3. Crea el Bucket de S3
+# Verifica que tengas el AWS CLI instalado en tu computadora y corre el siguiente comando para generar tu contenedor de almacenamiento en Floci:
+
+# aws --endpoint-url=http://localhost:4566 s3 mb s3://mi-bucket-frontend
+
+# make_bucket: mi-bucket-frontend
+
+
+# Paso 4: Crear tu Bucket en Floci
+
+aws --endpoint-url=http://localhost:4566 s3 mb s3://mi-bucket-frontend
+
+
+# Para bajar el servicio de docker compose 
+
+docker compose down
+
+# ¿Qué hace esto? Apaga el contenedor de forma segura y destruye la red virtual interna que creó Docker. Como no le pusimos volúmenes locales al archivo, el bucket que creamos (mi-bucket-frontend) y los archivos de React que subiste se borrarán. Esto es ideal porque te deja el entorno 100% limpio para cuando quieras volver a probar el despliegue desde cero.
+
+Para que te quede la total tranquilidad técnica: el AWS CLI no levanta ningún servicio, "daemon" o proceso de fondo (background process) en tu Mac. Funciona bajo el principio de petición-respuesta efímera:
+
+    Tú escribes aws s3 ls y presionas Enter.
+
+    El sistema operativo despierta el binario del AWS CLI.
+
+    El CLI envía la petición HTTP al puerto de tu Floci, recibe la respuesta, te la pinta en la pantalla y se muere inmediatamente.
+
+
+    Mientras no estés ejecutando un comando manualmente, el AWS CLI ocupa exactamente 0% de CPU y 0 MB de RAM. Es solo código guardado en tu disco duro esperando a ser llamado.
+
+Los únicos componentes que sí consumían recursos de manera constante eran el contenedor de Docker (Floci) y el túnel de Ngrok, los cuales ya apagaste con éxito mediante docker compose down y cerrando la terminal. Tu Mac está ahora mismo completamente libre de procesos de este ejercicio.
+
+
+
+aws s3 ls
+
+aws: [ERROR]: An error occurred (InvalidAccessKeyId) when calling the ListBuckets operation: The AWS Access Key Id you provided does not exist in our records.
+
+
+
+No, no es normal en el contexto de las pruebas que veníamos haciendo, pero el error tiene una explicación técnica muy lógica.
+
+Te explico exactamente por qué te acaba de salir este error:
+1. ¿Por qué falló? (Falta el --endpoint-url)
+
+Ejecutaste el comando así: aws s3 ls.
+
+Al no ponerle el parámetro --endpoint-url=http://localhost:4566, el AWS CLI asume por defecto que estás intentando conectarte a los servidores reales y públicos de Amazon Web Services en internet.
+
+Como en los pasos anteriores configuramos credenciales ficticias (test / test), Amazon revisó sus servidores reales, no encontró ninguna cuenta con la llave test, y te rechazó el acceso con el error: "(InvalidAccessKeyId) ... does not exist in our records".
+2. ¿Cómo debe ser el comando?
+
+Recuerda que para hablarle a tu servidor local (Floci), siempre debes indicarle explícitamente a dónde apuntar:
+
+
+aws --endpoint-url=http://localhost:4566 s3 ls
+
+aws: [ERROR]: Could not connect to the endpoint URL: "http://localhost:4566/"

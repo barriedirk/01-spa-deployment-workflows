@@ -1,0 +1,76 @@
+### verify floci running
+
+$ docker ps
+CONTAINER ID   IMAGE           COMMAND                  CREATED         STATUS         PORTS                     NAMES
+ab31b7b97e17   floci/floci   "/usr/local/bin/floci"   2 hours ago     Up 2 hours     [IP_ADDRESS]->80/tcp      floci-aws-sandbox
+
+
+# Paso 1: Generar los archivos de producción (El Build)
+
+pnpm build
+
+# Paso 2: Subir los archivos a tu S3 Local (Floci)
+# Para subir toda la carpeta dist al bucket que creaste, vamos a usar el comando aws s3 sync. Este comando es el estándar de la industria porque es inteligente: compara lo que tienes localmente con lo que hay en el servidor y solo sube los archivos nuevos o modificados.
+
+aws --endpoint-url=http://localhost:4566 s3 sync dist/ s3://mi-bucket-frontend
+
+upload: dist/assets/index-D64VDMd1.css to s3://mi-bucket-frontend/assets/index-D64VDMd1.css
+upload: dist/assets/vite-BF8QNONU.svg to s3://mi-bucket-frontend/assets/vite-BF8QNONU.svg
+upload: dist/assets/hero-CLDdwZDr.png to s3://mi-bucket-frontend/assets/hero-CLDdwZDr.png
+upload: dist/assets/react-CHdo91hT.svg to s3://mi-bucket-frontend/assets/react-CHdo91hT.svg
+upload: dist/icons.svg to s3://mi-bucket-frontend/icons.svg      
+upload: dist/favicon.svg to s3://mi-bucket-frontend/favicon.svg  
+upload: dist/index.html to s3://mi-bucket-frontend/index.html    
+upload: dist/assets/index-Bk444_v4.js to s3://mi-bucket-frontend/assets/index-Bk444_v4.js
+
+# Paso 3: Verificar que los archivos estén en la nube local
+# Para asegurarnos de que el despliegue funcionó y los archivos ya viven dentro de Floci, vamos a listar el contenido del bucket con el comando ls (List):
+
+aws --endpoint-url=http://localhost:4566 s3 ls s3://mi-bucket-frontend
+                           PRE assets/
+2026-05-17 20:22:38       9522 favicon.svg
+2026-05-17 20:22:38       5031 icons.svg
+2026-05-17 20:22:38        465 index.html
+
+# modify package.json
+"scripts": {
+  "dev": "vite",
+  "build": "tsc && vite build",
+  "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+  "preview": "vite preview",
+  "deploy:local": "aws --endpoint-url=http://localhost:4566 s3 sync dist/ s3://mi-bucket-frontend"
+},
+
+# execute command
+
+pnpm build
+pnpm deploy:local
+
+
+1. Lo que tienes corriendo en Docker (Floci / S3)
+
+Lo que acabas de levantar con Floci no es un servidor que ejecuta código en tiempo real (como uno de Node.js, .NET o Java). Es un Servidor de Almacenamiento de Objetos (un clon de AWS S3).
+
+
+
+Su única función en la vida es guardar archivos (index.html, main.js, styles.css) y entregárselos intactos a cualquiera que los pida.
+
+Tu comando s3 sync lo único que hizo fue subir esos archivos a esa "caja fuerte" local.
+
+
+# El último detalle para que tu App "se vea" en el navegador
+
+# Justo ahora, tus archivos ya viven en el bucket de Floci, pero AWS S3 viene bloqueado de forma ultra estricta por defecto. Si intentas entrar desde el navegador, no verás nada porque el bucket aún no sabe que debe comportarse como una "página web pública".
+
+# Para activar el "servidor web" interno de tu bucket de Floci y poder abrir tu app de React en el navegador, ejecuta este último comando en tu terminal:
+
+
+aws --endpoint-url=http://localhost:4566 s3 website s3://mi-bucket-frontend --index-document index.html
+
+# Ahora tu aplicación debería ser visible en la siguiente dirección web:
+
+# Cuando entras a http://localhost:4566/, le estás hablando directamente al "cerebro" de Amazon (la API). La API no habla en páginas web ni en HTML; habla en XML o JSON para responderle a herramientas como el AWS CLI. Por eso te devolvió esa lista con el nombre de tu bucket.
+
+# http://<nombre-de-tu-bucket>.localhost:4566/
+
+http://mi-bucket-frontend.localhost:4566/

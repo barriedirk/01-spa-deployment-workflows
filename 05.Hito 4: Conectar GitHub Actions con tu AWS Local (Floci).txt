@@ -1,0 +1,28 @@
+Hito 4: Conectar GitHub Actions con tu AWS Local (Floci)
+
+Ahora viene el verdadero reto de arquitectura: ¿Cómo hacemos para que el "robot" de GitHub Actions (que vive en los servidores de GitHub en internet) se conecte a un contenedor de Docker (Floci) que está corriendo dentro de tu Mac local?
+
+En el mundo real, un servidor de producción tiene una IP pública en internet y GitHub se conecta directo. Pero como tu Mac está protegida detrás del router de tu casa u oficina, GitHub Actions no puede "ver" tu localhost:4566.
+
+La Solución Senior: Ngrok (Túnel Seguro)
+
+Para resolver esto sin gastar en servidores reales, vamos a usar una herramienta estándar de la industria llamada Ngrok. Ngrok creará un túnel seguro y temporal que expondrá el puerto 4566 de tu Mac a internet a través de una URL pública (por ejemplo: https://un-id-aleatorio.ngrok-free.app).
+
+De esta forma, le daremos esa URL a GitHub Actions para que pueda deployar directo en tu computadora.
+
+Paso 1: Instalar Ngrok en tu Mac
+
+Como ya tienes Homebrew listo, la instalación te tomará tres segundos. Ejecuta en tu terminal:
+
+Paso 2: Crear una cuenta gratuita y obtener tu AuthToken
+
+Para poder usar Ngrok, necesitas autenticar tu terminal (política de seguridad contra spam):
+
+    Entra a ngrok.com y regístrate con tu cuenta de GitHub (es gratis y toma un clic).
+
+    En tu panel de Ngrok, busca la sección "Your Authtoken".
+
+    Copia el token largo que te dan y ejecútalo en tu terminal de Mac de esta manera:
+
+
+ngrok config add-authtoken TU_TOKEN_AQUÍ
