@@ -1,0 +1,43 @@
+# Crear proyecto de ejemplo con Vite:
+pnpm create vite my-project-test --template react-ts
+cd my-project-test
+pnpm install
+
+# Construir la imagen:
+docker build -t mi-app-frontend .
+
+# Correr el contenedor:
+
+docker run -d -p 8080:80 --name contenedor-frontend mi-app-frontend
+
+
+my-project-test/
+├── .git/
+├── node_modules/
+├── src/
+├── index.html
+├── package.json
+├── pnpm-lock.yaml
+├── .dockerignore    <-- Aquí
+└── Dockerfile       <-- Aquí
+
+
+
+# Para ver qué contenedores están activos ahora mismo en tu sistema operativo, ejecuta este comando en tu terminal:
+docker ps
+
+# Para detenerlo (apagar el servidor):
+docker stop contenedor-frontend
+
+# Para eliminar el contenedor (liberar el proceso):
+docker rm contenedor-frontend
+
+
+# El flujo correcto para ver tus cambios:
+docker stop contenedor-frontend && docker rm contenedor-frontend
+
+# Volver a empaquetar la imagen (para que tome el código nuevo):
+docker build -t mi-app-frontend .
+
+# Volver a encender el contenedor:
+docker run -d -p 8080:80 --name contenedor-frontend mi-app-frontend

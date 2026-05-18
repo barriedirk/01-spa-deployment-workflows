@@ -1,0 +1,45 @@
+# Nombre del pipeline que aparecerá en la interfaz de GitHub
+name: Frontend CI Pipeline
+
+# 1. DISPARADORES: Cuándo debe ejecutarse este flujo
+on:
+  push:
+    branches: [main, master] # Se activa cuando subes código a main o master
+  pull_request:
+    branches: [main, master] # Se activa cuando alguien abre un PR a estas ramas
+
+# 2. TRABAJOS: Qué va a hacer este flujo
+jobs:
+  build-and-test:
+    # Levanta una máquina virtual limpia con la última versión de Ubuntu Linux
+    runs-on: ubuntu-latest
+
+    steps:
+      # Paso 1: Clonar el código del repositorio en la máquina virtual
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Paso 2: Instalar Node.js en la máquina virtual
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Paso 3: Instalar pnpm (usando la acción oficial de pnpm para manejar la caché)
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9 # O la versión que tengas instalada
+
+      # Paso 4: Instalar las dependencias del proyecto
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Paso 5: Validar la calidad del código (Linter)
+      - name: Run Linter
+        run: pnpm lint
+
+      # Paso 6: Simular la compilación de producción (Docker Build)
+      # Aquí probamos que el Dockerfile que hicimos ayer funcione perfectamente en la nube
+      - name: Build Docker Image
+        run: docker build -t mi-app-frontend:latest .

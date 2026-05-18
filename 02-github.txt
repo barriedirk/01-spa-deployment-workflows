@@ -1,0 +1,38 @@
+# En la raíz de tu proyecto, crea una carpeta llamada .github (asegúrate de incluir el punto al inicio).
+
+# Dentro de esa carpeta, crea otra subcarpeta llamada workflows.
+
+# Dentro de workflows, crea un archivo llamado ci.yml
+
+mi-proyecto-prueba/
+├── .github/
+│   └── workflows/
+│       └── ci.yml     <-- Aquí vamos a escribir el pipeline
+├── src/
+├── Dockerfile
+└── package.json
+
+# Paso 3: Subir el código a GitHub
+
+# Para ver la magia en acción, necesitas subir este proyecto a un repositorio tuyo en GitHub. Ejecuta los comandos clásicos de Git en tu terminal:
+
+git init
+git add .
+git commit -m "feat: add dockerfile and github actions pipeline"
+
+# (Conecta tu repo remoto de GitHub aquí si no lo has hecho)
+
+git branch -M main
+git push -u origin main
+
+
+
+¿Y para qué sirve todo este show? (El valor real)
+
+Sirve como un filtro de seguridad. Si tú por error borraste una llave { en tu código de React, o si un comando de importación está roto, cuando el robot intente correr pnpm build o pnpm lint en la nube, el proceso fallará y se pondrá en rojo.
+
+GitHub te mandará un correo diciendo: "¡Alerta! El pipeline falló en el Paso 5".
+
+De esta forma, evitas que código roto llegue a producción. En las empresas grandes, nadie tiene permitido fusionar código a la rama principal si este "robot" (el archivo ci.yml) no da su aprobación con un check verde.
+
+¿Hace más sentido ahora? Es simplemente automatizar en una computadora de GitHub los mismos comandos que tú tiras en tu terminal local.
