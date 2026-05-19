@@ -16,7 +16,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-level: 20
 
       - name: Install pnpm
         uses: pnpm/action-setup@v3
@@ -38,8 +38,4 @@ jobs:
 
       - name: Deploy to S3 Bucket via Ngrok Tunnel
         run: |
-          aws --endpoint-url=${{ secrets.AWS_ENDPOINT_URL }} s3 sync dist/ s3://mi-bucket-frontend --header "ngrok-skip-browser-warning: true"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          aws --endpoint-url=${{ secrets.AWS_ENDPOINT_URL }} s3 sync dist/ s3://mi-bucket-frontend
