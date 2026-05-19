@@ -64,3 +64,40 @@ tu-proyecto/
 Paso 3: Código del Pipeline de CI/CD
 
 Pega el siguiente contenido dentro de tu archivo deploy.yml. Este script le dice al robot de GitHub exactamente qué hacer cada vez que subas código a la rama main:
+
+
+add deploy.yml
+
+
+git add .
+git commit
+git push origin master
+
+
+# Forma 1: Revisa la terminal con el AWS CLI (La prueba rápida)
+
+# Pregúntale directamente a tu Floci local qué archivos tiene guardados en el bucket. Ejecuta este comando en tu terminal de Mac:
+
+
+aws --endpoint-url=http://localhost:4566 s3 ls s3://mi-bucket-frontend --recursive
+
+# Si la respuesta está vacía: El pipeline falló silenciosamente o subió los archivos a una ruta incorrecta (por ejemplo, una carpeta vacía como dist/ si la compilación generó otra carpeta como build/).
+
+# Si ves archivos (como index.html): El problema es meramente del navegador y del hosting. Pasemos a la Validación 2.
+
+Validación 2: ¿Activaste el modo sitio web después del push?
+
+# Si la Validación 1 te mostró archivos, ejecuta este comando obligatoriamente para decirle a Floci que se comporte como un servidor web:
+
+aws --endpoint-url=http://localhost:4566 s3 website s3://mi-bucket-frontend --index-document index.html
+
+
+
+# Validación 3: Probar la URL alternativa (Evitando problemas de DNS)
+
+# Muchos navegadores (especialmente las versiones recientes de Chrome y Brave) bloquean los subdominios de localhost (bucket.localhost) por motivos de seguridad.
+
+# Si la URL http://mi-bucket-frontend.localhost:4566/ te da un error de "No se puede acceder a este sitio", Floci ofrece una estructura de URL alternativa que no requiere configuración de DNS:
+
+# Intenta ingresar a esta URL exacta en tu navegador:
+# 👉 http://localhost:4566/mi-bucket-frontend/index.html
