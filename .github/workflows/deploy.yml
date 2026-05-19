@@ -3,7 +3,7 @@ name: Deploy SPA to Local AWS (Floci)
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   deploy:
