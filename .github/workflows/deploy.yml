@@ -38,4 +38,4 @@ jobs:
 
       - name: Deploy to S3 Bucket via Ngrok Tunnel
         run: |
-          aws --endpoint-url=${{ secrets.AWS_ENDPOINT_URL }} s3 sync dist/ s3://mi-bucket-frontend --header "ngrok-skip-browser-warning: true"
+          aws --endpoint-url=${{ secrets.AWS_ENDPOINT_URL }} s3 sync dist/ s3://mi-bucket-frontend

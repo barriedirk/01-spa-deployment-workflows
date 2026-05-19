@@ -58,8 +58,8 @@ GitHub Actions busca automáticamente los archivos de configuración en una ruta
 La estructura de carpetas en tu editor debe verse exactamente así:
 tu-proyecto/
 └── .github/
-└── workflows/
-└── deploy.yml
+    └── workflows/
+        └── deploy.yml
 
 Paso 3: Código del Pipeline de CI/CD
 
