@@ -26,3 +26,41 @@ Para poder usar Ngrok, necesitas autenticar tu terminal (política de seguridad 
 
 
 ngrok config add-authtoken TU_TOKEN_AQUÍ
+
+# Paso 1: Levantar tu infraestructura local
+
+docker compose up -d
+
+----
+
+aws --endpoint-url=http://localhost:4566 s3 mb s3://mi-bucket-frontend
+
+
+----
+
+
+# Paso 2: Abrir el túnel con Ngrok
+
+ngrok http 4566
+
+---
+
+# Paso 2: Crear el archivo de Workflow en tu proyecto
+
+GitHub Actions busca automáticamente los archivos de configuración en una ruta muy específica de tu proyecto.
+
+    En la raíz de tu proyecto de React, crea una carpeta llamada .github.
+
+    Dentro de esa carpeta, crea otra llamada workflows.
+
+    Dentro de workflows, crea un archivo llamado deploy.yml.
+
+La estructura de carpetas en tu editor debe verse exactamente así:
+tu-proyecto/
+└── .github/
+└── workflows/
+└── deploy.yml
+
+Paso 3: Código del Pipeline de CI/CD
+
+Pega el siguiente contenido dentro de tu archivo deploy.yml. Este script le dice al robot de GitHub exactamente qué hacer cada vez que subas código a la rama main:

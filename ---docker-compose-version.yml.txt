@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  floci:
+    image: floci/floci:latest
+    container_name: floci-aws-sandbox
+    ports:
+      - "4566:4566" # Puerto estándar compatible con las APIs de AWS
+    environment:
+      - SERVICES=s3 # Activamos exclusivamente el almacenamiento de objetos
+      - AWS_DEFAULT_REGION=us-east-1
