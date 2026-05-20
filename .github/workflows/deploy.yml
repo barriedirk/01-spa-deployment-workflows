@@ -29,13 +29,17 @@ jobs:
       - name: Build application
         run: pnpm build
 
-      # Se eliminó por completo el bloque de "Configure AWS credentials" de aquí
-
       - name: Deploy to S3 Bucket via Ngrok Tunnel
         run: |
-          aws --endpoint-url=${{ secrets.AWS_ENDPOINT_URL }} s3 sync dist/ s3://mi-bucket-frontend --header "ngrok-skip-browser-warning: true"
+          # 1. Crear el bucket por si Floci se reinició
+          aws --endpoint-url=${{ secrets.AWS_ENDPOINT_URL }} s3 mb s3://mi-bucket-frontend || true
+
+          # 2. Sincronizar usando la configuración global de la petición
+          aws --endpoint-url=${{ secrets.AWS_ENDPOINT_URL }} s3 sync dist/ s3://mi-bucket-frontend
         env:
           AWS_ACCESS_KEY_ID: test
           AWS_SECRET_ACCESS_KEY: test
           AWS_DEFAULT_REGION: us-east-1
           AWS_SESSION_TOKEN: ""
+          # Inyectamos el header de Ngrok directamente en las llamadas HTTP globales del agente
+          AWS_HTTP_HEADERS: '{"ngrok-skip-browser-warning":"true"}'
