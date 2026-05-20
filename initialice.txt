@@ -1,0 +1,22 @@
+
+# Paso 1: Levantar Floci (Docker)
+docker compose up -d
+
+
+# Paso 2: Encender el túnel de Ngrok
+ngrok http 4566
+
+ngrok                                                                                                 (Ctrl+C to quit)
+                                                                                                                      
+🚪 One gateway for every AI model. Available in early access *now*: https://ngrok.com/r/ai                            
+                                                                                                                      
+Session Status                online                                                                                  
+Account                       BarrieDirk (Plan: Free)                                                                 
+Version                       3.39.2                                                                                  
+Region                        South America (sa)                                                                      
+Latency                       98ms                                                                                    
+Web Interface                 http://127.0.0.1:4040                                                                   
+Forwarding                    https://feast-flame-challenge.ngrok-free.dev -> http://localhost:4566                   
+                                                                                                                      
+Connections                   ttl     opn     rt1     rt5     p50     p90                                             
+                              0       0       0.00    0.00    0.00    0.00    
